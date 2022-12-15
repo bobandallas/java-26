@@ -91,6 +91,10 @@ class HashMapTest {
 //        Day2Student s2 = new Day2Student(1);
         Map<Day2Student, Integer> map = new HashMap<>();
         map.put(s1, 1);
+        s1.setId(10);
+        /**
+         *  id = 1 -> hash <- == id = 2
+         */
         System.out.println(map.get(s1));
     }
 }
@@ -147,7 +151,7 @@ class DequeTest {
  */
 class PriorityQueueTest {
     public static void main(String[] args) {
-//        PriorityQueue<Integer> heap = new PriorityQueue<>((v1, v2) -> v2 - v1);
+        PriorityQueue<Integer> heap = new PriorityQueue<>((v1, v2) -> v2 - v1);
 //        PriorityQueue<Day2Student> heap = new PriorityQueue<>((v1, v2) -> v2.getId() - v1.getId());
 //        Day2Student s1 = new Day2Student(2);
 //        Day2Student s2 = new Day2Student(3);
@@ -179,11 +183,11 @@ class IteratorTest {
 //        for(int v: list) {
 //            list.add(v + 2);
 //        }
-//        Iterator<Integer> itr = list.iterator();
-//        while(itr.hasNext()) {
-//            System.out.println(itr.next());
-//            list.add(5);
-//        }
+        Iterator<Integer> itr = list.iterator();
+        while(itr.hasNext()) {
+            System.out.println(itr.next());
+            itr.remove();
+        }
     }
 }
 
