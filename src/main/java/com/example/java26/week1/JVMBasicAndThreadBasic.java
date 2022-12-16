@@ -1,5 +1,7 @@
 package com.example.java26.week1;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  *  Stack
  *      thread 1 to 1 stack
@@ -293,3 +295,100 @@ class VolatileTest3 {
  *
  *
  */
+
+class SynchronizedNonSyncValue1 {
+    private static boolean flag = false;
+    public static synchronized void func1() {
+        while(!flag) {
+
+        }
+        System.out.println("break");
+    }
+
+    public static void main(String[] args) throws Exception {
+        Thread t1 = new Thread(() -> func1());
+        Thread t2 = new Thread(() -> {
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            flag = true;
+            System.out.println(flag);
+        });
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+    }
+}
+
+class SynchronizedNonSyncValue2 {
+    private static int v = 0;
+    private static CountDownLatch latch = new CountDownLatch(1);
+
+    public synchronized static void inc() {
+        for(int i = 0; i < 10000; i++) {
+            v++;
+            if(i == 50) {
+                latch.countDown();
+            }
+        }
+    }
+    /*
+        Non-volatile changes won't be visible is not 100% true; it just no guarantee
+        On the X86, caches are always coherent. So if CPU1 executes a store on address A and CPU2 has the cache line containing A, the cache line is invalidated on CPU2 before the store can commit to the the L1D on CPU1. So if CPU2 wants to load A after the cache line has been invalidated, it will run into a coherence miss and first needs to get the cache line in e.g. shared or exclusive state before it can read A. And as consequence it will see the newest value of A.
+        So volatile loads and stores have no influence on caches being coherent. On the X86 it will not happen that on CPU2 the old value is loaded for A, after CPU1 committed A to the L1D.
+        The primary purpose of volatile is to prevent reordering with respect to other loads and stores to other addresses.
+        https://stackoverflow.com/questions/63874879/why-non-volatile-variable-is-updated-on-cpu-shared-cache
+        https://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html
+        https://gee.cs.oswego.edu/dl/jmm/cookbook.html
+
+        java memory model
+            cpu could copy values from main memory to cpu local caches(L1, L2, L3), and values are not visible to other cpus
+
+            volatile
+                a. happen before (by using barrier)
+                   prevent reordering (by using barrier)
+                b. visibility (always read from main memory, update main memory when change the value)
+            synchronized
+                a. happen before
+                b. put monitor on object (scope is object)
+                c. write cpu cache back to main memory
+                d. need to put thread into blocked status, and need extra time on thread scheduling
+            CAS
+                a. atomic instruction, very fast
+
+
+        x86 processor
+            (not 100% sure) memory barrier will flush or drain dirty data / cpu caches to main memory
+            volatile
+                a. mfence instruction / or other instructions (StoreLoad / full barrier)
+                   prevent reordering / happen before
+                b. (not 100% sure) x86 follows cache coherence protocol, any changes to cache (volatile or non-volatile variables)
+                   will invalidate related cache of other Cpus
+                c. cpu will cache volatile values until other cpu send invalidation signal, then it will fetch newest value into cpu local cache.
+            synchronized
+                a. use "Lock" prefix instruction to lock cache (StoreLoad / full barrier)
+            CAS
+                a. use "Lock" prefix instruction to lock cache (StoreLoad / full barrier)
+    */
+    public static void print() {
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println(v);
+    }
+
+    public static void main(String[] args) throws Exception {
+        Thread t2 = new Thread(() -> inc());
+        Thread t1 = new Thread(() -> print());
+
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+    }
+}
