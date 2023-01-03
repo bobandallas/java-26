@@ -15,10 +15,9 @@ package com.example.java26.week1;
  *  Atomic Library
  */
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -300,3 +299,61 @@ class CountDownLatchDemo {
  *     1. java 8 stream api / parallel stream / completable future
  *     2. sql / index...
  */
+
+class ThreadPoolTest2 {
+
+
+    public static void main(String[] args) throws Exception {
+        System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "100");
+
+        List<Integer> l = new ArrayList<>();
+        for(int i = 0; i < 100; i++) {
+            l.add(i);
+        }
+        l.parallelStream().map(x -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return x;
+        }).forEach(x -> System.out.println(Thread.currentThread() + ": " + x));
+        System.out.println(ForkJoinPool.commonPool().getPoolSize());
+    }
+}
+
+
+class ThreadPoolTest3 {
+
+    public void func() {
+        Executors.newCachedThreadPool();
+    }
+    public static void main(String[] args) throws Exception {
+        new ThreadPoolTest3().func();
+    }
+}
+
+
+class SynchronousQueueTest {
+
+    private static ExecutorService pool = Executors.newCachedThreadPool();
+
+    public static void main(String[] args) throws Exception {
+        SynchronousQueue q = new SynchronousQueue();
+        for(int i = 0; i < 100; i++) {
+            final int v = i;
+            pool.submit(() -> {
+                q.offer(Thread.currentThread() + "," + String.valueOf(v));
+            });
+            pool.submit(() -> {
+                try {
+                    System.out.println(Thread.currentThread() + "," + q.take());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+    }
+}
+
