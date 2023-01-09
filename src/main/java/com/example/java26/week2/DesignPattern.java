@@ -97,7 +97,7 @@ class CarFactory {
 /**
  *      builder
  */
-class Student {
+class Student extends Object{
     @MyAnnotation(name = "aaaaaabbbcc")
     private String name;
     private int age;
@@ -423,8 +423,3 @@ class ReflectionDemo {
         System.out.println(s1);
     }
 }
-
-/**
- *  oracle live sql
- *  oracle sql
- */
