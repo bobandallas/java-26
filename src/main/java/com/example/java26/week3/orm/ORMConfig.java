@@ -128,7 +128,7 @@ select student0_.id as id1_0_, student0_.name as name2_0_ from student student0_
 
  */
     private static void getStudentById(EntityManager em) {
-        Query query = em.createQuery("select s from Student s left join  s.teacher_students ts where s.id = ?1");
+        Query query = em.createQuery("select s from Student s left join s.teacher_students ts where s.id = ?1");
         query.setParameter(1, "17");
         Student s = (Student)query.getSingleResult();
         System.out.println(s.getTeacher_students());
