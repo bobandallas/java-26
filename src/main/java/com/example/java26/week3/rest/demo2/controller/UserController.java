@@ -53,6 +53,7 @@ public class UserController {
  *                                          |
  *                                          --> can visit -> turn it off
  *
+ *
  * * * * * * * * * * * * * * * * * * * * *
  * TDD(test driven development)
  *      1. requirement
@@ -62,4 +63,23 @@ public class UserController {
  *      5. impl TODO
  *      6. run test cases
  *      7. git push -> pull request code review -> merge -> trigger jenkins pipeline -> development env / qa env / dev env
+ *
+ *
+ * * * * * * * * * * * * * * * * * * * *
+ * /user/{id @PathVariable}/courses?x=x @RequestParam
+ *
+ * /user/{id}/courses/{c_id}
+ * * * * * * * * * * * * * * * * * * * *
+ * 1. microservice
+ *         user
+ *          |
+ *      serverA      <->      serverB(3rd party company)
+ *
+ *
+ *         user
+ *          |
+ *         serverA
+ *          /     \
+ *      serverB   serverC
+ *
  */
