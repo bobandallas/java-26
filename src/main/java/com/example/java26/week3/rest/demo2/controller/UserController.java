@@ -81,5 +81,10 @@ public class UserController {
  *         serverA
  *          /     \
  *      serverB   serverC
+ * * * * * * * * * * * * * * * * * * * *
+ *
+ *   /teacher/{t_id}/student/{s_id}
+ *   /junction-table/{id}
+ *   /junction-table?xxx=
  *
  */
