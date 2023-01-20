@@ -86,12 +86,12 @@ class Solution {
 }
 
 class SolutionUnitTest {
-    private static Solution solution;
+    private static Solution solution = new Solution();
 
-    @BeforeAll
-    public static void init() {
-        solution = new Solution();
-    }
+//    @BeforeAll
+//    public static void init() {
+//        solution.
+//    }
 
     @Test
     public void invalidInput() {
